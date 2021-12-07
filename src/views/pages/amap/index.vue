@@ -21,7 +21,6 @@ export default {
   props: {},
   data() {
     return {
-      viewMode: '2D',
       AMap: null,
       map: null,
       loca: null,
@@ -34,7 +33,7 @@ export default {
     AMapLoader.load({
       "key": "1d69655efabee693bf2f99d8580ea7e7",  // 申请好的Web端开发者Key，首次调用 load 时必填
       "version": "2.0",                        // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-      "plugins": [],                              // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      "plugins": ['AMap.ControlBar'],                              // 需要使用的的插件列表，如比例尺'AMap.Scale'等
       "AMapUI": {                                 // 是否加载 AMapUI，缺省不加载
         "version": '1.1',                         // AMapUI 缺省 1.1
         "plugins": []                              // 需要加载的 AMapUI ui插件
@@ -57,22 +56,35 @@ export default {
   methods: {
     change2Dor3D(mode) {
       if (mode === '2D') {
-        this.map.setPitch(0);
+        this.map.setPitch(15);
+        this.map.setZoom(5.29);
       }
       if (mode === '3D') {
-        this.map.setPitch(75);
+
+        this.map.setPitch(60);
+        this.map.setZoom(6.5);
       }
     },
     initMap(AMap) {
       this.AMap = AMap;
       this.map = new AMap.Map("container", {
         resizeEnable: true,
+        rotateEnable:true,
         viewMode: '3D', // 地图模式
+        pitch: 15,
         mapStyle: "amap://styles/dark",
         center: [121.473667,31.230525],
         zoom: 5.29,
       });
       this.map.setFitView();
+      this.map.addControl(new AMap.ControlBar({
+        showZoomBar:false,
+        showControlButton:true,
+        position:{
+          right:'10px',
+          top:'10px'
+        }
+      }));
       this.loca = new window.Loca.Container({
         map: this.map,
       });
@@ -209,6 +221,21 @@ export default {
             {
               "type": "Feature",
               "properties": {
+                "type": 0,
+                "ratio": 0.0369,
+                "lineWidthRatio": 1
+              },
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [117.120128,36.652069],
+                  [121.473667,31.230525]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "properties": {
                 "type": 1,
                 "ratio": 0.035,
                 "lineWidthRatio": 0.9447674418604651
@@ -218,6 +245,22 @@ export default {
                 "coordinates": [
                   [121.473667,31.230525],
                   [118.675724,24.874452]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "properties": {
+                "type": 1,
+                "ratio": 0.035,
+                "lineWidthRatio": 0.9447674418604651
+              },
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [118.675724,24.874452],
+                  [121.473667,31.230525]
+
                 ]
               }
             },
@@ -239,6 +282,21 @@ export default {
             {
               "type": "Feature",
               "properties": {
+                "type": 2,
+                "ratio": 0.0189,
+                "lineWidthRatio": 0.47674418604651164
+              },
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [114.304569,30.593354],
+                  [121.473667,31.230525]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "properties": {
                 "type": 3,
                 "ratio": 0.0167,
                 "lineWidthRatio": 0.41279069767441856
@@ -248,6 +306,21 @@ export default {
                 "coordinates": [
                   [121.473667,31.230525],
                   [117.227267,31.820567]
+                ]
+              }
+            },
+            {
+              "type": "Feature",
+              "properties": {
+                "type": 3,
+                "ratio": 0.0167,
+                "lineWidthRatio": 0.41279069767441856
+              },
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [117.227267,31.820567],
+                  [121.473667,31.230525]
                 ]
               }
             },
@@ -287,26 +360,26 @@ export default {
 
       pulseLink.setSource(geo);
       pulseLink.setStyle({
-        unit: 'meter',
+        unit: 'px',
         dash: [40000, 0, 40000, 0],
         lineWidth: function () {
-          return [16000, 6000];
+          return [3, 3];
         },
         height: function (index, feat) {
           return feat.distance / 3 + 10;
         },
         // altitude: 1000,
-        smoothSteps: 10,
+        smoothSteps: 30,
         speed: function () {
-          return 1000 + Math.random() * 200000;
+          return 100;
         },
-        flowLength: 100000,
+        flowLength: 50,
         lineColors: function () {
-          return ['rgb(255,228,105)', 'rgb(255,164,105)', 'rgba(1, 34, 249,1)'];
+          return ['rgb(183, 58, 205)', 'rgb(60, 15, 247)'];
         },
-        maxHeightScale: 0.3, // 弧顶位置比例
-        headColor: 'rgba(255, 255, 0, 1)',
-        trailColor: 'rgba(255, 255,0,0)',
+        maxHeightScale: 0.5, // 弧顶位置比例
+        headColor: 'rgba(255, 191, 255, 0.8)',
+        trailColor: 'rgba(208, 114, 255, 0.2)'
       });
       this.loca.add(pulseLink);
       this.loca.animate.start();
